@@ -1,0 +1,12 @@
+.dzen-rss-admin .description {
+  max-width: 72rem;
+}
+
+.dzen-rss-admin .dzen-rss-actions {
+  margin: 1rem 0 1.5rem;
+}
+
+.dzen-rss-admin table.widefat td {
+  vertical-align: top;
+}
+
