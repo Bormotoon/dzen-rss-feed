@@ -1,5 +1,8 @@
 # Dzen RSS Feed
 
+[![CI](https://github.com/Bormotoon/dzen-rss-feed/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Bormotoon/dzen-rss-feed/actions/workflows/ci.yml)
+[![Latest release](https://img.shields.io/github/v/release/Bormotoon/dzen-rss-feed?include_prereleases)](https://github.com/Bormotoon/dzen-rss-feed/releases/latest)
+
 Плагин WordPress для генерации отдельной RSS-ленты под текущие требования Дзена.
 
 Он не ломает стандартные ленты WordPress, умеет собирать контент из постов и CPT, поддерживает per-post overrides, даёт админскую диагностику и работает через отдельный feed endpoint.
@@ -20,6 +23,7 @@
 - [Структура проекта](#структура-проекта)
 - [Проверка](#проверка)
 - [Частые вопросы](#частые-вопросы)
+- [Релизы и CI](#релизы-и-ci)
 - [Документация](#документация)
 - [Лицензия](#лицензия)
 
@@ -224,6 +228,13 @@
 - [Спецификация Дзена](docs/dzen-rss-spec.md)
 - [Архитектура](docs/architecture.md)
 - [Чеклист проверки](docs/testing-checklist.md)
+
+## Релизы и CI
+
+- CI запускается на `main` и на pull request'ах в `main`.
+- Release workflow собирает zip-архив плагина автоматически по тегам `v*`.
+- Архив релиза не включает `.git` и `.github`, поэтому подходит для установки в WordPress как обычный плагин.
+- Страницу релизов смотри здесь: [Releases](https://github.com/Bormotoon/dzen-rss-feed/releases).
 
 ## Лицензия
 
