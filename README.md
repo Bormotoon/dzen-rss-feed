@@ -45,6 +45,7 @@
 - берёт описание из meta, excerpt или первого абзаца;
 - умеет подставлять авторов, обложки и URL источника через override meta;
 - фильтрует HTML через whitelist и приводит разметку к XML-safe виду;
+- вырезает блок источника Pedobraz и пустые Themify Builder wrappers из HTML фида;
 - выводит `guid` как стабильный opaque identifier;
 - выводит `media:rating` как `nonadult` с `scheme="urn:simple"`;
 - экспортирует обложку в `enclosure` только для JPEG, PNG, GIF и WebP;

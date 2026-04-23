@@ -34,6 +34,8 @@
 - [ ] Запись с несколькими изображениями не ломает feed.
 - [ ] Изображение в неподдерживаемом формате не попадает в enclosure и помечается warning в diagnostics, но запись не исключается.
 - [ ] Запись с WebP-обложкой попадает в enclosure, не даёт `unsupported_image_format` и не требует JPEG/PNG-копии.
+- [ ] Блок `pedobraz-source-attribution` полностью вырезается из sanitized content.
+- [ ] Пустой `themify_builder_content` wrapper удаляется, а непустой builder content остаётся.
 - [ ] Запись с shortcode корректно очищается.
 - [ ] Запись с embed/iframe корректно очищается.
 - [ ] Запись с таблицей не ломает XML.

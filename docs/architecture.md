@@ -63,6 +63,7 @@
 - `guid` сериализуется как opaque identifier с `isPermaLink="false"`.
 - `enclosure` выводится только для проверяемых image MIME types: JPEG, PNG, GIF, WebP.
 - Если MIME определить невозможно или формат не поддерживается, item может пройти с warning, но без `enclosure`.
+- HTML normalizer всегда вырезает `p.pedobraz-source-attribution`, а пустые `themify_builder_content` wrappers удаляет целиком, чтобы такие фрагменты не попадали в RSS.
 - `pubDate` формируется как RFC822 в UTC через `gmdate(DATE_RSS, ...)`, чтобы не зависеть от локали WordPress.
 
 ### Strict mode

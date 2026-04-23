@@ -38,11 +38,31 @@ final class Dzen_RSS_HTML_Normalizer
         if (function_exists('strip_shortcodes')) {
             $html = strip_shortcodes($html);
         }
+        $html = $this->remove_source_attribution_blocks($html);
+        $html = $this->remove_empty_themify_builder_wrappers($html);
         if (function_exists('force_balance_tags')) {
             $html = force_balance_tags($html);
         }
 
         return $html;
+    }
+
+    private function remove_source_attribution_blocks(string $html): string
+    {
+        return preg_replace(
+            '~<p\b[^>]*class=(["\'])[^"\']*\bpedobraz-source-attribution\b[^"\']*\1[^>]*>.*?</p>~is',
+            '',
+            $html
+        ) ?? $html;
+    }
+
+    private function remove_empty_themify_builder_wrappers(string $html): string
+    {
+        return preg_replace(
+            '~<!--\s*themify_builder_content\s*-->\s*<!--\s*/\s*themify_builder_content\s*-->~is',
+            '',
+            $html
+        ) ?? $html;
     }
 
     private function repair_fragment(string $html): string
@@ -71,6 +91,10 @@ final class Dzen_RSS_HTML_Normalizer
             foreach ($this->xpath_nodes($xpath, '//' . $tag) as $node) {
                 $this->remove_node($node);
             }
+        }
+
+        foreach ($this->xpath_nodes($xpath, "//p[contains(concat(' ', normalize-space(@class), ' '), ' pedobraz-source-attribution ')]") as $node) {
+            $this->remove_node($node);
         }
 
         foreach ($this->xpath_nodes($xpath, '//*[@href or @src or @poster or @srcset or @data-src or @data-original]') as $node) {
