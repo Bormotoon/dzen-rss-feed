@@ -11,10 +11,8 @@ if (! defined('ABSPATH')) {
 
 final class Dzen_RSS_Mapper
 {
-    public function __construct(
-        private readonly Dzen_RSS_Options $options,
-        private readonly Dzen_RSS_Image_Resolver $image_resolver
-    ) {
+    public function __construct(private readonly Dzen_RSS_Options $options)
+    {
     }
 
     public function map_post_to_feed_item(WP_Post $post): Dzen_RSS_Feed_Item
@@ -46,35 +44,6 @@ final class Dzen_RSS_Mapper
         $item->image_mime_type = $this->resolve_image_mime_type($item->source_image_url, $post);
         $item->image_width = $this->resolve_image_width($post, $item->source_image_url);
         $item->image_height = $this->resolve_image_height($post, $item->source_image_url);
-
-        $feed_image = $this->image_resolver->resolve(
-            $post,
-            $item->image_url,
-            $item->image_mime_type,
-            $item->image_width,
-            $item->image_height
-        );
-
-        if (isset($feed_image['url']) && is_string($feed_image['url']) && $feed_image['url'] !== '') {
-            $item->image_url = $feed_image['url'];
-        }
-        if (array_key_exists('mime_type', $feed_image)) {
-            $item->image_mime_type = is_string($feed_image['mime_type']) && $feed_image['mime_type'] !== '' ? $feed_image['mime_type'] : null;
-        }
-        if (array_key_exists('width', $feed_image)) {
-            $item->image_width = is_int($feed_image['width']) ? $feed_image['width'] : null;
-        }
-        if (array_key_exists('height', $feed_image)) {
-            $item->image_height = is_int($feed_image['height']) ? $feed_image['height'] : null;
-        }
-        if (! empty($feed_image['warnings']) && is_array($feed_image['warnings'])) {
-            foreach ($feed_image['warnings'] as $warning) {
-                if (is_string($warning) && $warning !== '') {
-                    $item->warnings[] = $warning;
-                }
-            }
-        }
-
         $item->mobile_link = $this->resolve_mobile_link($post);
 
         $item->source_terms = $this->collect_terms($post);
@@ -83,8 +52,6 @@ final class Dzen_RSS_Mapper
             'post_date_gmt' => $post->post_date_gmt,
             'post_modified_gmt' => $post->post_modified_gmt,
             'is_featured' => (bool) get_post_meta($post->ID, 'pedobraz_featured', true),
-            'image_source_mime_type' => $feed_image['source_mime_type'] ?? $item->image_mime_type,
-            'image_converted' => (bool) ($feed_image['converted'] ?? false),
         ];
 
         return $item;
@@ -235,6 +202,30 @@ final class Dzen_RSS_Mapper
         return null;
     }
 
+    private function resolve_image_mime_type(?string $image_url, WP_Post $post): ?string
+    {
+        if ($image_url === null || $image_url === '') {
+            return null;
+        }
+
+        $attachment_id = $this->get_attachment_id_for_image($post, $image_url);
+        if ($attachment_id > 0) {
+            $mime = get_post_mime_type($attachment_id);
+            if (is_string($mime) && $mime !== '') {
+                $mime_type = Dzen_RSS_Constants::normalize_image_mime_type($mime);
+                return $mime_type !== '' ? $mime_type : null;
+            }
+        }
+
+        $filetype = wp_check_filetype($image_url);
+        if (! empty($filetype['type'])) {
+            $mime_type = Dzen_RSS_Constants::normalize_image_mime_type((string) $filetype['type']);
+            return $mime_type !== '' ? $mime_type : null;
+        }
+
+        return null;
+    }
+
     private function resolve_image_width(WP_Post $post, ?string $image_url): ?int
     {
         $attachment_id = $this->get_attachment_id_for_image($post, $image_url);
@@ -256,30 +247,6 @@ final class Dzen_RSS_Mapper
             if (is_array($meta) && isset($meta['height'])) {
                 return absint($meta['height']);
             }
-        }
-
-        return null;
-    }
-
-    private function resolve_image_mime_type(?string $image_url, WP_Post $post): ?string
-    {
-        if ($image_url === null || $image_url === '') {
-            return null;
-        }
-
-        $attachment_id = $this->get_attachment_id_for_image($post, $image_url);
-        if ($attachment_id > 0) {
-            $mime = get_post_mime_type($attachment_id);
-            if (is_string($mime) && $mime !== '') {
-                $mime_type = Dzen_RSS_Constants::normalize_image_mime_type($mime);
-                return $mime_type !== '' ? $mime_type : null;
-            }
-        }
-
-        $filetype = wp_check_filetype((string) (wp_parse_url($image_url, PHP_URL_PATH) ?: $image_url));
-        if (! empty($filetype['type'])) {
-            $mime_type = Dzen_RSS_Constants::normalize_image_mime_type((string) $filetype['type']);
-            return $mime_type !== '' ? $mime_type : null;
         }
 
         return null;
@@ -333,35 +300,6 @@ final class Dzen_RSS_Mapper
         return wp_strip_all_tags($html);
     }
 
-    private function get_attachment_id_for_image(WP_Post $post, ?string $image_url): int
-    {
-        if ($image_url === null || $image_url === '') {
-            return 0;
-        }
-
-        $featured = $this->resolve_featured_image($post);
-        if (($featured['url'] ?? null) === $image_url) {
-            return (int) ($featured['attachment_id'] ?? 0);
-        }
-
-        if (function_exists('attachment_url_to_postid')) {
-            $attachment_id = absint(attachment_url_to_postid($image_url));
-            if ($attachment_id > 0) {
-                return $attachment_id;
-            }
-
-            $parsed_path = (string) (wp_parse_url($image_url, PHP_URL_PATH) ?: '');
-            if ($parsed_path !== '') {
-                $attachment_id = absint(attachment_url_to_postid(home_url($parsed_path)));
-                if ($attachment_id > 0) {
-                    return $attachment_id;
-                }
-            }
-        }
-
-        return 0;
-    }
-
     /**
      * @return array<string, string[]>
      */
@@ -406,4 +344,24 @@ final class Dzen_RSS_Mapper
         return $normalized;
     }
 
+    private function get_attachment_id_for_image(WP_Post $post, ?string $image_url): int
+    {
+        if ($image_url === null || $image_url === '') {
+            return 0;
+        }
+
+        $featured = $this->resolve_featured_image($post);
+        if (($featured['url'] ?? null) === $image_url) {
+            return (int) ($featured['attachment_id'] ?? 0);
+        }
+
+        if (function_exists('attachment_url_to_postid')) {
+            $attachment_id = absint(attachment_url_to_postid($image_url));
+            if ($attachment_id > 0) {
+                return $attachment_id;
+            }
+        }
+
+        return 0;
+    }
 }

@@ -27,19 +27,3 @@ foreach ([
 ] as $meta_key) {
     delete_post_meta_by_key($meta_key);
 }
-
-$upload_dir = function_exists('wp_upload_dir') ? wp_upload_dir() : [];
-if (is_array($upload_dir) && ! empty($upload_dir['basedir'])) {
-    $derivative_dir = trailingslashit((string) $upload_dir['basedir']) . Dzen_RSS_Constants::IMAGE_DERIVATIVE_SUBDIR;
-    if (is_dir($derivative_dir) && function_exists('glob')) {
-        $paths = glob($derivative_dir . '/*');
-        if (is_array($paths)) {
-            foreach ($paths as $path) {
-                if (is_file($path)) {
-                    @unlink($path);
-                }
-            }
-        }
-        @rmdir($derivative_dir);
-    }
-}

@@ -11,7 +11,7 @@ if (! defined('ABSPATH')) {
 
 final class Dzen_RSS_Constants
 {
-    public const VERSION = '1.0.2';
+    public const VERSION = '1.0.3';
 
     public const OPTION_NAME = 'dzen_rss_options';
     public const CACHE_VERSION_OPTION = 'dzen_rss_cache_version';
@@ -32,8 +32,6 @@ final class Dzen_RSS_Constants
     public const DEFAULT_MIN_CONTENT_LENGTH = 300;
     public const DEFAULT_LIMIT = 20;
     public const MAX_QUERY_LIMIT = 500;
-    public const IMAGE_DERIVATIVE_SUBDIR = 'dzen-rss-feed';
-    public const DEFAULT_IMAGE_CONVERSION_QUALITY = 85;
 
     public const PUBLICATION_AUTO = 'auto';
     public const PUBLICATION_NATIVE_DRAFT = 'native-draft';

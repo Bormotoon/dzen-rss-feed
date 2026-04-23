@@ -47,9 +47,6 @@ final class Dzen_RSS_Hooks
         add_action('updated_post_meta', [$this, 'invalidate_on_meta_change'], 20, 4);
         add_action('added_post_meta', [$this, 'invalidate_on_meta_change'], 20, 4);
         add_action('deleted_post_meta', [$this, 'invalidate_on_meta_change'], 20, 4);
-        add_action('add_attachment', [$this, 'invalidate_cache']);
-        add_action('edit_attachment', [$this, 'invalidate_cache']);
-        add_action('delete_attachment', [$this, 'invalidate_cache']);
 
         if (is_admin()) {
             add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_assets']);
@@ -146,3 +143,4 @@ final class Dzen_RSS_Hooks
         wp_enqueue_script('dzen-rss-admin', $base . '/assets/admin.js', ['jquery'], Dzen_RSS_Constants::VERSION, true);
     }
 }
+

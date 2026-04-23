@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: Dzen RSS Feed
- * Description: Generates a dedicated RSS feed for Yandex Dzen crossposting with settings, diagnostics, XMLWriter-based output, and feed-safe image conversion.
- * Version: 1.0.2
+ * Description: Generates a dedicated RSS feed for Yandex Dzen crossposting with settings, diagnostics, and XMLWriter-based output.
+ * Version: 1.0.3
  * Author: PedObraz
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
