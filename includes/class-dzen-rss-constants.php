@@ -11,10 +11,11 @@ if (! defined('ABSPATH')) {
 
 final class Dzen_RSS_Constants
 {
-    public const VERSION = '1.0.3';
+    public const VERSION = '1.0.4';
 
     public const OPTION_NAME = 'dzen_rss_options';
     public const CACHE_VERSION_OPTION = 'dzen_rss_cache_version';
+    public const PLUGIN_VERSION_OPTION = 'dzen_rss_plugin_version';
     public const LAST_DIAGNOSTICS_OPTION = 'dzen_rss_last_diagnostics';
 
     public const META_PREFIX = '_dzen_rss_';
@@ -169,6 +170,7 @@ final class Dzen_RSS_Constants
             'image/jpeg',
             'image/gif',
             'image/png',
+            'image/webp',
         ];
     }
 

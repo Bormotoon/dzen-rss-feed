@@ -40,6 +40,7 @@ final class Dzen_RSS_Hooks
         add_action('admin_post_dzen_rss_flush_cache', [$this->diagnostics_page, 'handle_flush_cache']);
         add_action('admin_post_dzen_rss_flush_rewrite', [$this->diagnostics_page, 'handle_flush_rewrite']);
 
+        add_action('init', [$this, 'sync_plugin_version'], 1);
         add_action('updated_option', [$this, 'handle_option_update'], 10, 3);
         add_action('save_post', [$this, 'invalidate_on_post_save'], 20, 2);
         add_action('deleted_post', [$this, 'invalidate_cache']);
@@ -58,6 +59,7 @@ final class Dzen_RSS_Hooks
         $this->post_meta->register();
         $this->register_feed_endpoints();
         $this->cache->invalidate();
+        $this->update_plugin_version_marker();
         flush_rewrite_rules(false);
     }
 
@@ -71,6 +73,17 @@ final class Dzen_RSS_Hooks
         foreach ($this->options->get_feed_slugs() as $slug) {
             add_feed($slug, [$this->controller, 'serve_feed']);
         }
+    }
+
+    public function sync_plugin_version(): void
+    {
+        $stored_version = (string) get_option(Dzen_RSS_Constants::PLUGIN_VERSION_OPTION, '');
+        if ($stored_version === Dzen_RSS_Constants::VERSION) {
+            return;
+        }
+
+        $this->cache->invalidate();
+        $this->update_plugin_version_marker();
     }
 
     /**
@@ -142,5 +155,9 @@ final class Dzen_RSS_Hooks
         wp_enqueue_style('dzen-rss-admin', $base . '/assets/admin.css', [], Dzen_RSS_Constants::VERSION);
         wp_enqueue_script('dzen-rss-admin', $base . '/assets/admin.js', ['jquery'], Dzen_RSS_Constants::VERSION, true);
     }
-}
 
+    private function update_plugin_version_marker(): void
+    {
+        update_option(Dzen_RSS_Constants::PLUGIN_VERSION_OPTION, Dzen_RSS_Constants::VERSION, false);
+    }
+}

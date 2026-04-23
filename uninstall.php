@@ -13,6 +13,7 @@ require_once __DIR__ . '/includes/class-dzen-rss-constants.php';
 
 delete_option(Dzen_RSS_Constants::OPTION_NAME);
 delete_option(Dzen_RSS_Constants::CACHE_VERSION_OPTION);
+delete_option(Dzen_RSS_Constants::PLUGIN_VERSION_OPTION);
 delete_option(Dzen_RSS_Constants::LAST_DIAGNOSTICS_OPTION);
 
 foreach ([

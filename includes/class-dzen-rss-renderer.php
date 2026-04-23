@@ -69,12 +69,19 @@ final class Dzen_RSS_Renderer
             $writer->writeElement('category', $directive);
         }
 
-        $allowed_image_mime_types = Dzen_RSS_Constants::allowed_image_mime_types();
-        $image_mime_type = $item->image_mime_type !== null ? strtolower(trim($item->image_mime_type)) : '';
+        $image_mime_type = $item->image_mime_type !== null && $item->image_mime_type !== ''
+            ? Dzen_RSS_Constants::normalize_image_mime_type($item->image_mime_type)
+            : '';
 
-        if ($item->has_image() && $image_mime_type !== '' && in_array($image_mime_type, $allowed_image_mime_types, true)) {
+        if (
+            $item->has_image()
+            && $item->image_url !== null
+            && $this->is_valid_url($item->image_url)
+            && $image_mime_type !== ''
+            && in_array($image_mime_type, Dzen_RSS_Constants::allowed_image_mime_types(), true)
+        ) {
             $writer->startElement('enclosure');
-            $writer->writeAttribute('url', $item->image_url ?? '');
+            $writer->writeAttribute('url', $item->image_url);
             $writer->writeAttribute('type', $image_mime_type);
             $writer->endElement();
         }
@@ -122,5 +129,10 @@ final class Dzen_RSS_Renderer
         $content = str_replace(']]>', ']]]]><![CDATA[>', $content);
 
         return '<![CDATA[' . $content . ']]>';
+    }
+
+    private function is_valid_url(string $url): bool
+    {
+        return $url !== '' && (bool) filter_var($url, FILTER_VALIDATE_URL);
     }
 }

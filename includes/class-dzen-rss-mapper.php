@@ -223,7 +223,33 @@ final class Dzen_RSS_Mapper
             return $mime_type !== '' ? $mime_type : null;
         }
 
-        return null;
+        return $this->resolve_image_mime_type_from_path($image_url);
+    }
+
+    private function resolve_image_mime_type_from_path(string $image_url): ?string
+    {
+        $parts = function_exists('wp_parse_url') ? wp_parse_url($image_url) : parse_url($image_url);
+        if (! is_array($parts)) {
+            return null;
+        }
+
+        $path = (string) ($parts['path'] ?? '');
+        if ($path === '') {
+            return null;
+        }
+
+        $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+        if ($extension === '') {
+            return null;
+        }
+
+        return match ($extension) {
+            'jpg', 'jpeg' => 'image/jpeg',
+            'png' => 'image/png',
+            'gif' => 'image/gif',
+            'webp' => 'image/webp',
+            default => null,
+        };
     }
 
     private function resolve_image_width(WP_Post $post, ?string $image_url): ?int

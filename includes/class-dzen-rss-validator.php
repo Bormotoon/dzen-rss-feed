@@ -50,12 +50,16 @@ final class Dzen_RSS_Validator
         }
 
         if ($item->has_image()) {
-            if ($item->image_mime_type === null || $item->image_mime_type === '') {
+            $image_mime_type = $item->image_mime_type !== null && $item->image_mime_type !== ''
+                ? Dzen_RSS_Constants::normalize_image_mime_type($item->image_mime_type)
+                : '';
+
+            if ($image_mime_type === '') {
                 $result->add_warning('image_mime_unknown', __('Image MIME type could not be verified locally; enclosure will be omitted.', 'dzen-rss-feed'));
-            } elseif (! in_array(strtolower($item->image_mime_type), Dzen_RSS_Constants::allowed_image_mime_types(), true)) {
+            } elseif (! in_array($image_mime_type, Dzen_RSS_Constants::allowed_image_mime_types(), true)) {
                 $result->add_warning(
                     'unsupported_image_format',
-                    sprintf(__('Unsupported image format: %s. Allowed formats are JPEG, PNG and GIF; enclosure will be omitted.', 'dzen-rss-feed'), $item->image_mime_type)
+                    sprintf(__('Unsupported image format: %s. Allowed formats are JPEG, PNG, GIF and WebP; enclosure will be omitted.', 'dzen-rss-feed'), $image_mime_type)
                 );
             }
         }

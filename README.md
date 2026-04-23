@@ -47,7 +47,7 @@
 - фильтрует HTML через whitelist и приводит разметку к XML-safe виду;
 - выводит `guid` как стабильный opaque identifier;
 - выводит `media:rating` как `nonadult` с `scheme="urn:simple"`;
-- экспортирует обложку в `enclosure` только для JPEG, GIF и PNG;
+- экспортирует обложку в `enclosure` только для JPEG, PNG, GIF и WebP;
 - умеет работать в conservative и strict режиме sanitation;
 - хранит payload фида в transient cache и сбрасывает кэш при изменениях.
 
@@ -60,7 +60,7 @@
 - `category` используется не для рубрик WordPress, а для публикационных директив Дзена;
 - публикационные директивы можно не выводить, если все поля стоят в `Auto`;
 - поддерживаются `native-draft`, `format-article`, `format-post`, `index`, `noindex`, `comment-all`, `comment-subscribers`, `comment-none`;
-- картинки поддерживаются только в форматах JPEG, GIF и PNG;
+- картинки поддерживаются только в форматах JPEG, PNG, GIF и WebP;
 - минимальная ширина изображения для лучшего отображения - 700 px;
 - первое изображение в контенте может попасть на карточку;
 - `enclosure` используется для обложки материала;

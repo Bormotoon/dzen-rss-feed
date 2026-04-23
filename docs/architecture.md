@@ -61,7 +61,7 @@
 ## Validation policy
 
 - `guid` сериализуется как opaque identifier с `isPermaLink="false"`.
-- `enclosure` выводится только для проверяемых image MIME types: JPEG, PNG, GIF.
+- `enclosure` выводится только для проверяемых image MIME types: JPEG, PNG, GIF, WebP.
 - Если MIME определить невозможно или формат не поддерживается, item может пройти с warning, но без `enclosure`.
 - `pubDate` формируется как RFC822 в UTC через `gmdate(DATE_RSS, ...)`, чтобы не зависеть от локали WordPress.
 
@@ -77,6 +77,7 @@
 
 - Кэш только на transients.
 - Формируется по `cache_version` + значимому срезу опций.
+- После обновления файла плагина init-синхронизация сравнивает сохранённую версию плагина с `Dzen_RSS_Constants::VERSION` и сбрасывает кэш, если код обновился.
 - `debug_mode` отключает кэш.
 - Инвалидация происходит при:
   - сохранении релевантной записи;
@@ -105,3 +106,4 @@
 4. `category` относится не к WP taxonomy, а к Dzen publication directives; если все publication settings стоят на `Auto`, тег можно не выводить.
 5. Стандартные WordPress feeds не трогаются.
 6. URL endpoint можно менять, но старые slugs сохраняются как aliases, чтобы не ломать внешние интеграции.
+7. Версионный marker плагина используется как лёгкий guard, чтобы после деплоя новый XML не застревал в transient cache.
