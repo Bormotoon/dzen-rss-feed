@@ -41,7 +41,7 @@
 | `post_title` / `_dzen_rss_title_override` | `item/title` | таблица `title` | нет | Должен быть непустым. |
 | `get_permalink()` / `_dzen_rss_source_url_override` | `item/link` | таблица `link` | нет | URL статьи, трансляция которой идёт в RSS. |
 | stable hash of site URL + post ID | `item/guid` | таблица `guid` + пример | URL поста или hash | Для дедупликации лучше стабильный идентификатор; в плагине GUID пишется как opaque value с `isPermaLink="false"`. |
-| `post_date_gmt` / `_dzen_rss_pub_date_override` | `item/pubDate` | таблица `pubDate` | нет | Формат RFC822. |
+| `post_date_gmt` / `_dzen_rss_pub_date_override` | `item/pubDate` | таблица `pubDate` | нет | Формат RFC822 в английской локали, выдаётся в UTC через `gmdate(DATE_RSS, ...)`. |
 | publication directives | `item/category` | таблица `category` | `native-draft`, `format-article` / `format-post`, `index` / `noindex`, `comment-all` / `comment-subscribers` / `comment-none` | В Dzen `category` перегружен как набор публикационных директив. Если все публикационные настройки стоят на Auto, тег `category` можно не выводить. |
 | featured image / first content image / `_dzen_rss_image_override` | `item/enclosure` | таблица `enclosure` + media section | нет | Описание изображения обложки. |
 | rendered or raw post content | `item/content:encoded` | таблица `content:encoded` | пустой HTML запрещён | Тело статьи в CDATA. |
@@ -77,7 +77,7 @@
 - Минимальная ширина: 700 px.
 - Первое изображение, размеченное в контенте, попадает на карточку.
 - `enclosure` может быть единственным упоминанием медиа или дублировать `figure/img`.
-- Если MIME-тип изображения не удаётся определить локально, enclosure не выводится и в diagnostics появляется warning.
+- Если MIME-тип изображения не удаётся определить локально или формат не поддерживается, enclosure не выводится и в diagnostics появляется warning, но материал не исключается целиком.
 
 ### Видео
 

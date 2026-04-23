@@ -97,7 +97,7 @@ final class Dzen_RSS_Mapper
                 : time();
         }
 
-        return wp_date('D, d M Y H:i:s O', $timestamp);
+        return gmdate(DATE_RSS, $timestamp);
     }
 
     /**

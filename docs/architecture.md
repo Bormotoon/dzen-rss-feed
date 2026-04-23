@@ -62,8 +62,8 @@
 
 - `guid` сериализуется как opaque identifier с `isPermaLink="false"`.
 - `enclosure` выводится только для проверяемых image MIME types: JPEG, PNG, GIF.
-- Если MIME определить невозможно, item может пройти с warning, но без `enclosure`.
-- Unsupported image formats fail closed during validation.
+- Если MIME определить невозможно или формат не поддерживается, item может пройти с warning, но без `enclosure`.
+- `pubDate` формируется как RFC822 в UTC через `gmdate(DATE_RSS, ...)`, чтобы не зависеть от локали WordPress.
 
 ### Strict mode
 

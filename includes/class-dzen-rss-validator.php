@@ -53,9 +53,9 @@ final class Dzen_RSS_Validator
             if ($item->image_mime_type === null || $item->image_mime_type === '') {
                 $result->add_warning('image_mime_unknown', __('Image MIME type could not be verified locally; enclosure will be omitted.', 'dzen-rss-feed'));
             } elseif (! in_array(strtolower($item->image_mime_type), Dzen_RSS_Constants::allowed_image_mime_types(), true)) {
-                $result->add_reason(
+                $result->add_warning(
                     'unsupported_image_format',
-                    sprintf(__('Unsupported image format: %s. Allowed formats are JPEG, PNG and GIF.', 'dzen-rss-feed'), $item->image_mime_type)
+                    sprintf(__('Unsupported image format: %s. Allowed formats are JPEG, PNG and GIF; enclosure will be omitted.', 'dzen-rss-feed'), $item->image_mime_type)
                 );
             }
         }
@@ -126,7 +126,17 @@ final class Dzen_RSS_Validator
             return false;
         }
 
-        return strtotime($date) !== false;
+        $parsed = DateTimeImmutable::createFromFormat(DATE_RSS, $date);
+        if ($parsed === false) {
+            return false;
+        }
+
+        $errors = DateTimeImmutable::getLastErrors();
+        if ($errors !== false && (($errors['warning_count'] ?? 0) > 0 || ($errors['error_count'] ?? 0) > 0)) {
+            return false;
+        }
+
+        return $parsed->format(DATE_RSS) === $date;
     }
 
     private function text_length(string $html): int
