@@ -20,6 +20,7 @@
 | `Dzen_RSS_Feed_Item` | DTO для нормализованного item. |
 | `Dzen_RSS_HTML_Normalizer` | Низкоуровневое приведение HTML к безопасному виду. |
 | `Dzen_RSS_Content_Sanitizer` | Whitelist sanitation pipeline. |
+| `Dzen_RSS_Image_Resolver` | Feed-safe image selection и локальная конвертация неподдерживаемых форматов. |
 | `Dzen_RSS_Validator` | Проверка обязательных полей и Dzen-ограничений. |
 | `Dzen_RSS_Validation_Result` | Вердикт, причины и предупреждения. |
 | `Dzen_RSS_Renderer` | Единственное место генерации XML через `XMLWriter`. |
@@ -39,6 +40,7 @@
 4. Если кэша нет:
    - `Query_Service` собирает кандидатов.
    - Для каждого кандидата `Mapper` создаёт DTO.
+   - `Mapper` использует `Image_Resolver`, чтобы подготовить feed-safe image URL и при необходимости локально транскодировать WebP/unsupported uploads в JPEG.
    - DTO проходит `dzen_rss_feed_item`.
    - `Content_Sanitizer` нормализует HTML.
    - `Validator` проверяет готовый item.
@@ -63,6 +65,7 @@
 - `guid` сериализуется как opaque identifier с `isPermaLink="false"`.
 - `enclosure` выводится только для проверяемых image MIME types: JPEG, PNG, GIF.
 - Если MIME определить невозможно или формат не поддерживается, item может пройти с warning, но без `enclosure`.
+- Локальные WebP-изображения транскодируются в JPEG только для feed-обложки, чтобы не менять экономный storage сайта.
 - `pubDate` формируется как RFC822 в UTC через `gmdate(DATE_RSS, ...)`, чтобы не зависеть от локали WordPress.
 
 ### Strict mode
@@ -82,6 +85,7 @@
   - сохранении релевантной записи;
   - изменении релевантных meta keys;
   - смене таксономий;
+  - изменении attachment-ов, которые могут быть обложками;
   - сохранении настроек;
   - activation/deactivation.
 

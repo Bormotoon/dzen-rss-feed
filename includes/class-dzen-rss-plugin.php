@@ -17,6 +17,7 @@ require_once __DIR__ . '/class-dzen-rss-logger.php';
 require_once __DIR__ . '/class-dzen-rss-diagnostics.php';
 require_once __DIR__ . '/class-dzen-rss-html-normalizer.php';
 require_once __DIR__ . '/class-dzen-rss-content-sanitizer.php';
+require_once __DIR__ . '/class-dzen-rss-image-resolver.php';
 require_once __DIR__ . '/class-dzen-rss-validator.php';
 require_once __DIR__ . '/class-dzen-rss-mapper.php';
 require_once __DIR__ . '/class-dzen-rss-query-service.php';
@@ -49,7 +50,8 @@ final class Dzen_RSS_Plugin
         $this->cache = new Dzen_RSS_Cache($this->options);
         $this->diagnostics = new Dzen_RSS_Diagnostics();
 
-        $mapper = new Dzen_RSS_Mapper($this->options);
+        $image_resolver = new Dzen_RSS_Image_Resolver();
+        $mapper = new Dzen_RSS_Mapper($this->options, $image_resolver);
         $query_service = new Dzen_RSS_Query_Service($this->options);
         $normalizer = new Dzen_RSS_HTML_Normalizer();
         $sanitizer = new Dzen_RSS_Content_Sanitizer($this->options, $normalizer, $this->logger);
@@ -85,4 +87,3 @@ final class Dzen_RSS_Plugin
         $this->hooks->register();
     }
 }
-

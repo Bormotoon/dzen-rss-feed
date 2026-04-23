@@ -116,6 +116,10 @@ final class Dzen_RSS_Feed_Controller
             $result = $this->validator->validate($item, $post);
 
             $status = $result->is_valid ? 'included' : 'excluded';
+            $warnings = array_merge(
+                array_values(array_filter($item->warnings, static fn(mixed $warning): bool => is_string($warning) && $warning !== '')),
+                $result->warnings
+            );
             $report['items'][] = [
                 'post_id' => $post->ID,
                 'post_type' => $post->post_type,
@@ -124,7 +128,7 @@ final class Dzen_RSS_Feed_Controller
                 'guid' => $item->guid,
                 'link' => $item->link,
                 'reasons' => $result->reasons,
-                'warnings' => $result->warnings,
+                'warnings' => $warnings,
             ];
 
             if ($result->is_valid) {

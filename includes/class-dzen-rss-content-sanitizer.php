@@ -26,6 +26,7 @@ final class Dzen_RSS_Content_Sanitizer
 
         $allowed_html = Dzen_RSS_Constants::allowed_html($mode);
         $item->content_html = wp_kses($item->content_html, $allowed_html, Dzen_RSS_Constants::allowed_protocols());
+        $item->content_html = $this->rewrite_converted_image_urls($item->content_html, $item);
         $item->content_html = trim((string) apply_filters('dzen_rss_sanitized_html', $item->content_html, $item, $mode));
 
         $item->title = $this->sanitize_text($item->title);
@@ -44,6 +45,38 @@ final class Dzen_RSS_Content_Sanitizer
         return $item;
     }
 
+    private function rewrite_converted_image_urls(string $html, Dzen_RSS_Feed_Item $item): string
+    {
+        if ($html === '') {
+            return $html;
+        }
+
+        if ($item->source_image_url === null || $item->source_image_url === '') {
+            return $html;
+        }
+
+        if (empty($item->metadata['image_converted'])) {
+            return $html;
+        }
+
+        if ($item->image_url === null || $item->image_url === '' || $item->image_url === $item->source_image_url) {
+            return $html;
+        }
+
+        $source_variants = [
+            $item->source_image_url,
+            html_entity_decode($item->source_image_url, ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+            esc_url($item->source_image_url),
+        ];
+        $source_variants = array_values(array_unique(array_filter($source_variants, static fn(string $value): bool => $value !== '')));
+
+        foreach ($source_variants as $source_variant) {
+            $html = str_replace($source_variant, $item->image_url, $html);
+        }
+
+        return $html;
+    }
+
     private function sanitize_text(string $value): string
     {
         $value = wp_strip_all_tags($value);
@@ -52,4 +85,3 @@ final class Dzen_RSS_Content_Sanitizer
         return trim($value);
     }
 }
-
