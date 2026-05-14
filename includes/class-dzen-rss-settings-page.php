@@ -107,6 +107,7 @@ final class Dzen_RSS_Settings_Page
                     <?php $this->render_select_field('author_source', __('Author source', 'dzen-rss-feed'), $options['author_source'], $this->source_labels('author')); ?>
                     <?php $this->render_select_field('summary_source', __('Summary source', 'dzen-rss-feed'), $options['summary_source'], $this->source_labels('summary')); ?>
                     <?php $this->render_select_field('content_source', __('Full content source', 'dzen-rss-feed'), $options['content_source'], $this->source_labels('content')); ?>
+                    <?php $this->render_bool_field('append_site_link', __('Добавлять ссылку на новость на сайте', 'dzen-rss-feed'), $options['append_site_link'], __('В конец материала в ленте будет добавлен отдельный абзац со ссылкой на публикацию на сайте педобраз.рф.', 'dzen-rss-feed')); ?>
                     <?php $this->render_select_field('image_source', __('Image source', 'dzen-rss-feed'), $options['image_source'], $this->source_labels('image')); ?>
                     <?php $this->render_textarea_field('excluded_taxonomies', __('Excluded taxonomies', 'dzen-rss-feed'), implode(', ', $this->normalize_string_list($options['excluded_taxonomies'] ?? [])), __('category, post_tag, pedobraz_region', 'dzen-rss-feed')); ?>
                     <?php $this->render_number_field('minimum_content_length', __('Minimum content length', 'dzen-rss-feed'), $options['minimum_content_length'], 0, 10000); ?>
@@ -158,11 +159,15 @@ final class Dzen_RSS_Settings_Page
         echo '</tr>';
     }
 
-    private function render_bool_field(string $key, string $label, mixed $value): void
+    private function render_bool_field(string $key, string $label, mixed $value, string $description = ''): void
     {
         echo '<tr>';
         echo '<th scope="row"><label for="' . esc_attr($key) . '">' . esc_html($label) . '</label></th>';
-        echo '<td><label><input type="checkbox" id="' . esc_attr($key) . '" name="' . esc_attr(Dzen_RSS_Constants::OPTION_NAME . '[' . $key . ']') . '" value="1" ' . checked((bool) $value, true, false) . ' /> ' . esc_html__('Enabled', 'dzen-rss-feed') . '</label></td>';
+        echo '<td><label><input type="checkbox" id="' . esc_attr($key) . '" name="' . esc_attr(Dzen_RSS_Constants::OPTION_NAME . '[' . $key . ']') . '" value="1" ' . checked((bool) $value, true, false) . ' /> ' . esc_html__('Enabled', 'dzen-rss-feed') . '</label>';
+        if ($description !== '') {
+            echo '<p class="description">' . esc_html($description) . '</p>';
+        }
+        echo '</td>';
         echo '</tr>';
     }
 

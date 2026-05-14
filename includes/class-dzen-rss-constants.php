@@ -11,7 +11,7 @@ if (! defined('ABSPATH')) {
 
 final class Dzen_RSS_Constants
 {
-    public const VERSION = '1.0.5';
+    public const VERSION = '1.0.6';
 
     public const OPTION_NAME = 'dzen_rss_options';
     public const CACHE_VERSION_OPTION = 'dzen_rss_cache_version';
@@ -89,6 +89,7 @@ final class Dzen_RSS_Constants
             'author_source' => self::SOURCE_AUTHOR_POST,
             'summary_source' => self::SOURCE_SUMMARY_EXCERPT,
             'content_source' => self::SOURCE_CONTENT_RENDERED,
+            'append_site_link' => 0,
             'image_source' => self::SOURCE_IMAGE_FEATURED,
             'excluded_taxonomies' => [],
             'minimum_content_length' => self::DEFAULT_MIN_CONTENT_LENGTH,

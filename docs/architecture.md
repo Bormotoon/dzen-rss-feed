@@ -65,6 +65,7 @@
 - Если MIME определить невозможно или формат не поддерживается, item может пройти с warning, но без `enclosure`.
 - HTML normalizer всегда вырезает `p.pedobraz-source-attribution`, а пустые `themify_builder_content` wrappers удаляет целиком, чтобы такие фрагменты не попадали в RSS.
 - `pubDate` формируется как RFC822 в UTC через `gmdate(DATE_RSS, ...)`, чтобы не зависеть от локали WordPress.
+- При включённой настройке `Добавлять ссылку на новость на сайте` sanitizer добавляет в конец `content:encoded` отдельный абзац со ссылкой на canonical permalink материала на сайте, независимо от `_dzen_rss_source_url_override`.
 
 ### Strict mode
 
@@ -108,3 +109,4 @@
 5. Стандартные WordPress feeds не трогаются.
 6. URL endpoint можно менять, но старые slugs сохраняются как aliases, чтобы не ломать внешние интеграции.
 7. Версионный marker плагина используется как лёгкий guard, чтобы после деплоя новый XML не застревал в transient cache.
+8. Ссылка обратно на сайт хранится в DTO отдельно от RSS `link`, потому что `link` может быть переопределён как URL источника.

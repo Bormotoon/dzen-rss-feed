@@ -24,6 +24,7 @@ final class Dzen_RSS_Mapper
 
         $item->source_link = $this->resolve_link($post);
         $item->link = $item->source_link;
+        $item->site_link = $this->resolve_site_link($post);
 
         $item->guid = $this->resolve_guid($post);
         $item->pub_date = $this->resolve_pub_date($post);
@@ -75,6 +76,11 @@ final class Dzen_RSS_Mapper
         }
 
         return (string) get_permalink($post);
+    }
+
+    private function resolve_site_link(WP_Post $post): string
+    {
+        return esc_url_raw((string) get_permalink($post));
     }
 
     private function resolve_guid(WP_Post $post): string

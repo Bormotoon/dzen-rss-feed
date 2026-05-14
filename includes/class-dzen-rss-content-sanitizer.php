@@ -27,6 +27,7 @@ final class Dzen_RSS_Content_Sanitizer
         $allowed_html = Dzen_RSS_Constants::allowed_html($mode);
         $item->content_html = wp_kses($item->content_html, $allowed_html, Dzen_RSS_Constants::allowed_protocols());
         $item->content_html = trim((string) apply_filters('dzen_rss_sanitized_html', $item->content_html, $item, $mode));
+        $item->content_html = $this->append_site_link($item->content_html, $item);
 
         $item->title = $this->sanitize_text($item->title);
         $item->description = $this->sanitize_text($item->description);
@@ -44,6 +45,30 @@ final class Dzen_RSS_Content_Sanitizer
         return $item;
     }
 
+    private function append_site_link(string $content, Dzen_RSS_Feed_Item $item): string
+    {
+        if (! $this->options->should_append_site_link()) {
+            return $content;
+        }
+
+        $url = esc_url($item->site_link);
+        if ($url === '') {
+            return $content;
+        }
+
+        if (str_contains($content, $url)) {
+            return $content;
+        }
+
+        $paragraph = sprintf(
+            '<p class="dzen-rss-site-link"><a href="%1$s">%2$s</a></p>',
+            esc_url($url),
+            esc_html__('Читать материал на сайте педобраз.рф', 'dzen-rss-feed')
+        );
+
+        return trim($content . "\n\n" . $paragraph);
+    }
+
     private function sanitize_text(string $value): string
     {
         $value = wp_strip_all_tags($value);
@@ -52,4 +77,3 @@ final class Dzen_RSS_Content_Sanitizer
         return trim($value);
     }
 }
-

@@ -23,6 +23,7 @@ final class Dzen_RSS_Feed_Item
     public string $source_content_html = '';
     public string $source_title = '';
     public string $source_link = '';
+    public string $site_link = '';
     public string $source_description = '';
     public string $source_author = '';
     public string $author = '';

@@ -196,6 +196,11 @@ final class Dzen_RSS_Options
         return $this->normalize_strategy('content', (string) $this->get('content_source', Dzen_RSS_Constants::SOURCE_CONTENT_RENDERED));
     }
 
+    public function should_append_site_link(): bool
+    {
+        return (bool) $this->get('append_site_link', 0);
+    }
+
     public function get_image_source(): string
     {
         return $this->normalize_strategy('image', (string) $this->get('image_source', Dzen_RSS_Constants::SOURCE_IMAGE_FEATURED));
@@ -260,6 +265,7 @@ final class Dzen_RSS_Options
             'author_source' => $this->get_author_source(),
             'summary_source' => $this->get_summary_source(),
             'content_source' => $this->get_content_source(),
+            'append_site_link' => $this->should_append_site_link(),
             'image_source' => $this->get_image_source(),
             'excluded_taxonomies' => $this->get_excluded_taxonomies(),
             'minimum_content_length' => $this->get_minimum_content_length(),
@@ -283,6 +289,7 @@ final class Dzen_RSS_Options
         $sanitized = Dzen_RSS_Constants::default_options();
 
         $sanitized['enabled'] = ! empty($raw['enabled']) ? 1 : 0;
+        $sanitized['append_site_link'] = ! empty($raw['append_site_link']) ? 1 : 0;
         $sanitized['debug_mode'] = ! empty($raw['debug_mode']) ? 1 : 0;
         $sanitized['diagnostics_enabled'] = ! empty($raw['diagnostics_enabled']) ? 1 : 0;
 
