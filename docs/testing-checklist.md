@@ -32,6 +32,8 @@
 - [ ] Very dirty HTML не ломает feed.
 - [ ] Запись без изображения обрабатывается корректно.
 - [ ] Запись с несколькими изображениями не ломает feed.
+- [ ] Запись с featured image получает cover первым блоком `content:encoded`.
+- [ ] Если URL featured image уже встречается в теле записи, prepend cover не создаёт дубль.
 - [ ] Изображение в неподдерживаемом формате не попадает в enclosure и помечается warning в diagnostics, но запись не исключается.
 - [ ] Запись с WebP-обложкой попадает в enclosure, не даёт `unsupported_image_format` и не требует JPEG/PNG-копии.
 - [ ] Блок `pedobraz-source-attribution` полностью вырезается из sanitized content.

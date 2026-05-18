@@ -39,6 +39,7 @@
 4. Если кэша нет:
    - `Query_Service` собирает кандидатов.
    - Для каждого кандидата `Mapper` создаёт DTO.
+  - `Mapper` может prepend'ить featured image в `source_content_html` как первый `p > img` блок, если такого URL ещё нет в теле.
    - DTO проходит `dzen_rss_feed_item`.
    - `Content_Sanitizer` нормализует HTML.
    - `Validator` проверяет готовый item.

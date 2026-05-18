@@ -43,8 +43,8 @@
 | stable hash of site URL + post ID | `item/guid` | таблица `guid` + пример | URL поста или hash | Для дедупликации лучше стабильный идентификатор; в плагине GUID пишется как opaque value с `isPermaLink="false"`. |
 | `post_date_gmt` / `_dzen_rss_pub_date_override` | `item/pubDate` | таблица `pubDate` | нет | Формат RFC822 в английской локали, выдаётся в UTC через `gmdate(DATE_RSS, ...)`. |
 | publication directives | `item/category` | таблица `category` | `native-draft`, `format-article` / `format-post`, `index` / `noindex`, `comment-all` / `comment-subscribers` / `comment-none` | В Dzen `category` перегружен как набор публикационных директив. Если все публикационные настройки стоят на Auto, тег `category` можно не выводить. |
-| featured image / first content image / `_dzen_rss_image_override` | `item/enclosure` | таблица `enclosure` + media section | нет | Описание изображения обложки. |
-| rendered or raw post content | `item/content:encoded` | таблица `content:encoded` | пустой HTML запрещён | Тело статьи в CDATA. |
+| featured image / first content image / `_dzen_rss_image_override` | `item/enclosure` | таблица `enclosure` + media section | нет | Описание изображения обложки. Featured image сначала проверяется в размере `full`, затем в `large`. |
+| rendered or raw post content | `item/content:encoded` | таблица `content:encoded` | пустой HTML запрещён | Тело статьи в CDATA. Если у записи есть featured image и такой же URL ещё не встречается в теле, плагин добавляет её первым простым `p > img` блоком. |
 | `_dzen_rss_description_override` / excerpt / first paragraph | `item/description` | таблица `description` | пустая строка | Краткое описание карточки. |
 | post author / `_dzen_rss_author_override` | `item/author` | таблица `author` | omit | Поле опционально и по документации ограничено партнёрскими новостными сценариями. |
 | mobile URL source | `item/pdalink` | таблица `pdalink` | omit | В плагине поле предусмотрено, но без отдельного mobile mirror source оно не сериализуется. |
@@ -75,6 +75,7 @@
 
 - Форматы: JPEG, PNG, GIF, WebP.
 - Минимальная ширина: 700 px.
+- Для prepended cover плагин сперва использует размер `full`, затем `large` как fallback.
 - Первое изображение, размеченное в контенте, попадает на карточку.
 - `enclosure` может быть единственным упоминанием медиа или дублировать `figure/img`.
 - Если MIME-тип изображения не удаётся определить локально или формат не поддерживается, enclosure не выводится и в diagnostics появляется warning, но материал не исключается целиком.

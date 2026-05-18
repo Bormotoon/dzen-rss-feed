@@ -31,16 +31,18 @@ final class Dzen_RSS_Mapper
         $item->media_rating = 'nonadult';
         $item->publication_directives = $this->resolve_publication_directives($post);
 
-        $item->source_content_html = $this->resolve_content_html($post);
+        $base_content_html = $this->resolve_content_html($post);
+
+        $item->source_content_html = $this->prepend_featured_image_to_content_html($post, $base_content_html);
         $item->content_html = $item->source_content_html;
 
-        $item->source_description = $this->resolve_description($post, $item->source_content_html);
+        $item->source_description = $this->resolve_description($post, $base_content_html);
         $item->description = $item->source_description;
 
         $item->source_author = $this->resolve_author($post);
         $item->author = $item->source_author;
 
-        $item->source_image_url = $this->resolve_image_url($post, $item->source_content_html);
+        $item->source_image_url = $this->resolve_image_url($post, $base_content_html);
         $item->image_url = $item->source_image_url;
         $item->image_mime_type = $this->resolve_image_mime_type($item->source_image_url, $post);
         $item->image_width = $this->resolve_image_width($post, $item->source_image_url);
@@ -129,6 +131,39 @@ final class Dzen_RSS_Mapper
         }
 
         return $content;
+    }
+
+    private function prepend_featured_image_to_content_html(WP_Post $post, string $content_html): string
+    {
+        $featured = $this->resolve_featured_image($post);
+        $image_url = esc_url_raw((string) ($featured['url'] ?? ''));
+
+        if ($image_url === '') {
+            return $content_html;
+        }
+
+        $charset = (string) get_bloginfo('charset');
+        if ($charset === '') {
+            $charset = 'UTF-8';
+        }
+
+        $decoded_content = html_entity_decode($content_html, ENT_QUOTES | ENT_HTML5, $charset);
+        if (str_contains($decoded_content, $image_url)) {
+            return $content_html;
+        }
+
+        $alt = $this->resolve_featured_image_alt((int) ($featured['attachment_id'] ?? 0), $post);
+        $cover_html = sprintf(
+            '<p class="dzen-rss-cover"><img src="%s" alt="%s" /></p>',
+            esc_url($image_url),
+            esc_attr($alt)
+        );
+
+        if ($content_html === '') {
+            return $cover_html;
+        }
+
+        return $cover_html . "\n\n" . $content_html;
     }
 
     private function resolve_description(WP_Post $post, string $content_html): string
@@ -293,6 +328,10 @@ final class Dzen_RSS_Mapper
 
         $image = wp_get_attachment_image_src($thumbnail_id, 'full');
         if (! is_array($image) || empty($image[0])) {
+            $image = wp_get_attachment_image_src($thumbnail_id, 'large');
+        }
+
+        if (! is_array($image) || empty($image[0])) {
             return [];
         }
 
@@ -302,6 +341,18 @@ final class Dzen_RSS_Mapper
             'height' => isset($image[2]) ? absint($image[2]) : null,
             'attachment_id' => $thumbnail_id,
         ];
+    }
+
+    private function resolve_featured_image_alt(int $attachment_id, WP_Post $post): string
+    {
+        if ($attachment_id > 0) {
+            $alt = trim((string) get_post_meta($attachment_id, '_wp_attachment_image_alt', true));
+            if ($alt !== '') {
+                return $alt;
+            }
+        }
+
+        return (string) get_the_title($post);
     }
 
     private function extract_first_image(string $html): array
