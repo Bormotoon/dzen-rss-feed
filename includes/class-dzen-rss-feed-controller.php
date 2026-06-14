@@ -137,6 +137,17 @@ final class Dzen_RSS_Feed_Controller
 
         $report['valid_count'] = count($valid_items);
         $report['invalid_count'] = max(0, $report['candidate_count'] - $report['valid_count']);
+
+        // The configured limit caps how many items are actually published to the
+        // feed. The query service deliberately over-fetches (limit × 4, up to
+        // MAX_QUERY_LIMIT) so validation/exclusions still leave enough survivors;
+        // without this trim the feed would emit every survivor instead of `limit`.
+        $limit = $this->options->get_limit();
+        if ($limit > 0 && count($valid_items) > $limit) {
+            $valid_items = array_slice($valid_items, 0, $limit);
+        }
+        $report['rendered_count'] = count($valid_items);
+
         $report['items'] = array_slice($report['items'], 0, 50);
 
         if ($report['candidate_count'] === 0) {
