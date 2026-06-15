@@ -4,7 +4,7 @@ Tags: rss, dzen, yandex, feed, wordpress
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.1
-Stable tag: 1.0.8
+Stable tag: 1.0.9
 
 Generates a dedicated RSS feed for Yandex Dzen crossposting.
 
@@ -29,3 +29,4 @@ This plugin creates a separate feed endpoint for Dzen, sanitizes post content, e
 - Pedobraz source attribution blocks and empty Themify Builder wrappers are stripped from feed content.
 - The settings page can append a separate paragraph linking back to the Pedobraz site article.
 - The `limit` setting caps the number of items actually published to the feed (the query over-fetches for validation headroom, then trims to `limit`).
+- The feed sets `DONOTCACHEPAGE` so page caches (WP Super Cache, W3TC) never store it; freshness is handled by the plugin's own transient cache, which is invalidated on publish. This prevents an outer page cache from serving a frozen feed.

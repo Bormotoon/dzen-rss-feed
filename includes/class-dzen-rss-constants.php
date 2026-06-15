@@ -11,7 +11,7 @@ if (! defined('ABSPATH')) {
 
 final class Dzen_RSS_Constants
 {
-    public const VERSION = '1.0.8';
+    public const VERSION = '1.0.9';
 
     public const OPTION_NAME = 'dzen_rss_options';
     public const CACHE_VERSION_OPTION = 'dzen_rss_cache_version';

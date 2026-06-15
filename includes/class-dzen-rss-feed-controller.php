@@ -26,6 +26,14 @@ final class Dzen_RSS_Feed_Controller
 
     public function serve_feed(): void
     {
+        // Tell page caches (WP Super Cache, W3TC, …) never to store this response.
+        // The feed has its own transient cache with proper invalidation; an outer
+        // page cache does not know to refresh a custom feed endpoint on publish and
+        // would serve Dzen a frozen feed (see the 2026-06 stale-feed incident).
+        if (! defined('DONOTCACHEPAGE')) {
+            define('DONOTCACHEPAGE', true);
+        }
+
         if (! $this->options->is_enabled()) {
             $this->respond_not_found();
         }
