@@ -7,7 +7,9 @@
 
 Он не ломает стандартные ленты WordPress, умеет собирать контент из постов и CPT, поддерживает per-post overrides, даёт админскую диагностику и работает через отдельный feed endpoint.
 
-Репозиторий: `https://github.com/Bormotoon/dzen-rss-feed`
+
+
+🌐 **Страница проекта:** [педобраз.рф/projects/dzen-rss-feed](https://xn--80abidn3bem.xn--p1ai/projects/dzen-rss-feed/)Репозиторий: `https://github.com/Bormotoon/dzen-rss-feed`
 
 ## Содержание
 
